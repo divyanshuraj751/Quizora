@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ThemeToggle from "@/components/ThemeToggle";
+import Navbar from "@/components/Navbar";
 import Home from "./pages/Home.jsx";
 import Quiz from "./pages/Quiz.jsx";
 import Analytics from "./pages/Analytics.jsx";
@@ -19,7 +20,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <ThemeToggle />
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/quiz/:topicId" element={<Quiz />} />

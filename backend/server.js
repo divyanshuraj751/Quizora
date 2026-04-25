@@ -12,6 +12,18 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json({ limit: '15mb' }));
 
+function safeParseJSON(str) {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    const match = str.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (match) {
+      return JSON.parse(match[1]);
+    }
+    throw e;
+  }
+}
+
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 const marksMap = { easy: 2, medium: 5, hard: 10 };
 
@@ -172,7 +184,7 @@ Rules:
 
     const data = await response.json();
     const text = data.choices[0].message.content;
-    const parsed = JSON.parse(text);
+    const parsed = safeParseJSON(text);
 
     const question = {
       id: `ai_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
@@ -265,6 +277,7 @@ app.post('/api/generate-from-pdf', async (req, res) => {
   }
 
   const startTime = Date.now();
+  let lastError = null;
 
   // Calculate how many questions of each difficulty
   const total = Math.min(numQuestions, 50);
@@ -346,12 +359,14 @@ You must respond in valid JSON format:
       });
 
       if (!response.ok) {
-        console.error(`Groq API error on chunk ${ci}: ${response.status}`);
+        const errText = await response.text();
+        console.error(`Groq API error on chunk ${ci}: ${response.status} - ${errText}`);
+        if (ci === 0) throw new Error(`Groq API returned ${response.status}: ${errText}`);
         continue; // skip this chunk, try others
       }
 
       const data = await response.json();
-      const parsed = JSON.parse(data.choices[0].message.content);
+      const parsed = safeParseJSON(data.choices[0].message.content);
       const qs = parsed.questions || [parsed]; // handle single-question response
 
       for (const q of qs) {
@@ -370,14 +385,18 @@ You must respond in valid JSON format:
       }
 
       console.log(`  ✅ Chunk ${ci + 1}/${chunks.length}: generated ${qs.length} questions`);
+      if (ci < chunks.length - 1) {
+        await new Promise(r => setTimeout(r, 800)); // Rate limit protection
+      }
     } catch (err) {
+      lastError = err.message;
       console.error(`Chunk ${ci} generation failed:`, err.message);
       continue;
     }
   }
 
   if (allQuestions.length === 0) {
-    return res.status(500).json({ error: 'Failed to generate any questions. Please try again.' });
+    return res.status(500).json({ error: lastError || 'Failed to generate any questions. The AI API might be rate limited or returned invalid data. Please try a smaller PDF.' });
   }
 
   // Shuffle to mix difficulties
