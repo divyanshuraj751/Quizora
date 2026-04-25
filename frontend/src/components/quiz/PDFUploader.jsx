@@ -79,7 +79,8 @@ const PDFUploader = ({ onUploadSuccess, onReset }) => {
       const formData = new FormData();
       formData.append('pdf', file);
 
-      const res = await fetch('http://localhost:4000/api/upload-pdf', {
+      const apiBase = import.meta.env.DEV ? 'http://localhost:4000' : '/_/backend';
+      const res = await fetch(`${apiBase}/api/upload-pdf`, {
         method: 'POST',
         body: formData,
       });

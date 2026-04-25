@@ -75,7 +75,8 @@ const QuizCustomizer = ({ pdfData, onGenerate }) => {
     setGenError(null);
 
     try {
-      const res = await fetch('http://localhost:4000/api/generate-from-pdf', {
+      const apiBase = import.meta.env.DEV ? 'http://localhost:4000' : '/_/backend';
+      const res = await fetch(`${apiBase}/api/generate-from-pdf`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
