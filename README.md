@@ -1,5 +1,6 @@
 # AdaptIQ – Adaptive Learning System
 
+**🌐 Live Demo:** [https://adapt-iq-delta.vercel.app/](https://adapt-iq-delta.vercel.app/)
 AdaptIQ is an intelligent, self-contained educational platform that leverages Artificial Intelligence and Item Response Theory (IRT) to provide a deeply personalized learning experience. Instead of static question banks, AdaptIQ dynamically generates questions on any topic and adjusts difficulty in real-time based on student performance.
 
 ## 🌟 Key Features
