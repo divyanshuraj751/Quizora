@@ -2,9 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import multer from 'multer';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const { PDFParse } = require('pdf-parse');
+import pdfParse from 'pdf-parse';
 
 dotenv.config();
 
@@ -222,17 +220,13 @@ app.post('/api/upload-pdf', (req, res, next) => {
     return res.status(400).json({ error: 'No file uploaded. Please select a PDF file.' });
   }
 
-  let parser = null;
   try {
-    const uint8 = new Uint8Array(req.file.buffer);
-    parser = new PDFParse(uint8);
-    const textResult = await parser.getText();
+    const data = await pdfParse(req.file.buffer);
 
-    // Concatenate all page texts
-    const rawText = (textResult.pages || []).map(p => p.text || '').join('\n\n');
+    const rawText = data.text || '';
     const cleanedText = cleanExtractedText(rawText);
     const wordCount = cleanedText.split(/\s+/).filter(Boolean).length;
-    const pageCount = textResult.total || 1;
+    const pageCount = data.numpages || 1;
 
     if (wordCount < 50) {
       return res.status(422).json({
@@ -259,8 +253,6 @@ app.post('/api/upload-pdf', (req, res, next) => {
     }
     console.error('PDF parse error:', msg);
     return res.status(422).json({ error: 'This PDF appears to be corrupted or unreadable. Please try another file.' });
-  } finally {
-    try { if (parser) parser.destroy(); } catch {}
   }
 });
 
