@@ -88,7 +88,11 @@ const QuizCustomizer = ({ pdfData, onGenerate }) => {
         }),
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch {
+        throw new Error('Server timed out generating questions. Try fewer questions or a shorter PDF.');
+      }
       if (!res.ok) throw new Error(data.error || 'Generation failed');
 
       onGenerate?.({

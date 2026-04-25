@@ -85,7 +85,11 @@ const PDFUploader = ({ onUploadSuccess, onReset }) => {
         body: formData,
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch {
+        throw new Error('Server returned an unexpected response. Please try a smaller PDF.');
+      }
 
       if (!res.ok) {
         throw new Error(data.error || 'Upload failed');
