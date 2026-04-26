@@ -56,3 +56,4 @@ By default, the backend includes a development key. For production, create a `.e
 GROQ_API_KEY=your_groq_api_key_here
 PORT=4000
 ```
+
