@@ -202,7 +202,7 @@ export function pickNextQuestion(session, questionBank) {
  */
 export async function fetchGeminiQuestion(topic, difficulty, requestedDifficulty) {
   try {
-    const apiBase = import.meta.env.DEV ? 'http://localhost:4000' : '/_/backend';
+    const apiBase = import.meta.env.DEV ? `http://${window.location.hostname}:4000` : '/_/backend';
     const res = await fetch(`${apiBase}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -66,7 +66,7 @@ const Home = () => {
   };
 
   const bestScore = history.length > 0
-    ? Math.max(...history.map(h => h.accuracy))
+    ? Math.max(...history.map(h => h.accuracy || 0))
     : null;
 
   return (
@@ -90,7 +90,7 @@ const Home = () => {
         </p>
         {history.length > 0 && (
           <div className="header-stats">
-            <span className="stat-pill">{history.length} sessions</span>
+            <span className="stat-pill">{history.length} {history.length === 1 ? 'session' : 'sessions'}</span>
             {bestScore !== null && <span className="stat-pill">Best: {bestScore}%</span>}
           </div>
         )}

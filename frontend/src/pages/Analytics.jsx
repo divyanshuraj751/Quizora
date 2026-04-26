@@ -138,7 +138,7 @@ const Analytics = () => {
                       <span className="mastery-pct">{mPct}%</span>
                     </div>
                     <div className="mastery-detail">
-                      <span>{m.sessions} session(s)</span>
+                      <span>{m.sessions} {m.sessions === 1 ? 'session' : 'sessions'}</span>
                       <span>{m.totalCorrect}/{m.totalQ} correct</span>
                     </div>
                   </div>

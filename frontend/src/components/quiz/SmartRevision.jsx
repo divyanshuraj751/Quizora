@@ -14,7 +14,7 @@ const SmartRevision = ({ pdfData }) => {
     setError(null);
 
     try {
-      const apiBase = import.meta.env.DEV ? 'http://localhost:4000' : '/_/backend';
+      const apiBase = import.meta.env.DEV ? `http://${window.location.hostname}:4000` : '/_/backend';
       const res = await fetch(`${apiBase}/api/smart-revision`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
