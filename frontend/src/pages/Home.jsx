@@ -83,7 +83,7 @@ const Home = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="header-badge">AI revision for the whole semester</div>
+
         <h1>Adapt</h1>
         <p className="header-subtitle">
           Learn Smarter, Grow Faster.
